@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     v-row
-      v-col(cols="6")
+      v-col(cols="12" sm="6")
         v-card.ma-0(color="#EAFF3D")
           v-card-text
             template(v-for="(player, i) in players.slice(0, 4)")
@@ -13,7 +13,7 @@
                 :index="i + 1"
               )
 
-      v-col(cols="6")
+      v-col(cols="12" sm="6")
         v-card.ma-0(color="#603BFF")
           v-card-text
             template(v-for="(player, i) in players.slice(4, 8)")
