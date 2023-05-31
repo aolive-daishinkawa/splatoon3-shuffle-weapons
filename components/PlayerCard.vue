@@ -73,10 +73,10 @@ export default class PlayerCard extends Vue {
 
 <style lang="scss">
 .weapon-text {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 
   &-against {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     color: #242424;
   }
 }

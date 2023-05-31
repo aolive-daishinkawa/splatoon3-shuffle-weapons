@@ -32,6 +32,7 @@
           color="#FF6B00"
           block
           @click="execShuffleWeapons"
+          :disabled="shuffleWeaponsInstance"
         ) ブキシャッフル
 
       v-col(cols="6")
@@ -39,10 +40,18 @@
           color="#FF6B00"
           block
           size="large"
-          @click="shufflePlayers"
+          @click="execShufflePlayers"
+          :disabled="shufflePlayersInstance"
         ) プレイヤーシャッフル
 
-    pre {{ players }}
+    hr(style="margin-top: 120px; margin-bottom: 24px;")
+    v-row
+      v-col.pb-0(cols="12")
+        h3 ブキ一覧
+        span.text-caption ※ 合計 {{ allWeapons.length }} 種類
+    v-row
+      v-col(cols="auto")
+        v-chip(v-for="weapon in allWeapons" x-small) {{ weapon.name }}
 
 
 </template>
@@ -56,60 +65,68 @@ import WEAPONS from '~/assets/weapons.json'
 export default class IndexPage extends Vue {
   players: Array<Player> = [
     {
-      name: 'いち',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'に',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'さん',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'よん',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'ご',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'ろく',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'なな',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
-      name: 'はち',
+      name: '',
       weapon: null,
       disabled: false,
       isShuffleWeapon: true,
     },
   ]
 
-  shuffle: any = {}
+  shuffleWeaponsInstance: any = null
+  shufflePlayersInstance: any = null
+
+  get allWeapons() {
+    return WEAPONS
+  }
 
   execShuffleWeapons() {
-    this.shuffle = setInterval(this.shuffleWeapons, 50)
-    setTimeout(() => { clearInterval(this.shuffle)}, 2000)
+    this.shuffleWeaponsInstance = setInterval(this.shuffleWeapons, 50)
+    setTimeout(() => {
+      clearInterval(this.shuffleWeaponsInstance)
+      this.shuffleWeaponsInstance = null
+    }, 2000)
   }
 
   shuffleWeapons() {
@@ -122,6 +139,14 @@ export default class IndexPage extends Vue {
     for (const i of shuffleIndexes) {
       this.players[Number(i)].weapon = {...this.getRandomWeapon()}
     }
+  }
+
+  execShufflePlayers() {
+    this.shufflePlayersInstance = setInterval(this.shufflePlayers, 50)
+    setTimeout(() => {
+      clearInterval(this.shufflePlayersInstance)
+      this.shufflePlayersInstance = null
+    }, 2000)
   }
 
   shufflePlayers() {
