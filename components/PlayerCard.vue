@@ -9,7 +9,7 @@
             :false-value="true"
             :disabled="loading"
             color="#FF6B00"
-            @change="openSnackbar(privateDisabled ? 'プレイヤーを無効にしました' : 'プレイヤーを有効にしました'); $emit('update:disabled', privateDisabled)"
+            @change="openSnackbar(privateDisabled ? 'プレイヤーをシャッフルしません' : 'プレイヤーをシャッフルします'); $emit('update:disabled', privateDisabled)"
             hide-details
             light
           )
@@ -30,7 +30,7 @@
           v-switch.mt-0(
             v-model="privateIsShuffleWeapon"
             :disabled="disabled || loading"
-            @change="openSnackbar(privateIsShuffleWeapon ? 'ブキシャッフルを有効にしました' : 'ブキシャッフルを無効にしました'); $emit('update:is-shuffle-weapon', privateIsShuffleWeapon)"
+            @change="openSnackbar(privateIsShuffleWeapon ? 'ブキをシャッフルします' : 'ブキをシャッフルしません'); $emit('update:is-shuffle-weapon', privateIsShuffleWeapon)"
             hide-details
             light
             color="#FF6B00"
@@ -55,12 +55,12 @@
         centered
         timeout="1000"
         color="rgba(0, 0, 0, 0.8)"
-      ) {{ snackbarMessage }}
+      )
+        .text-ikamodoki.py-4 {{ snackbarMessage }}
 </template>
 
 <script lang="ts">
 import {Component, Prop, Vue, Watch} from 'vue-property-decorator'
-import { Weapon } from '~/types/Weapon';
 
 @Component({})
 export default class PlayerCard extends Vue {
@@ -115,4 +115,9 @@ export default class PlayerCard extends Vue {
   }
 }
 
+
+.text-ikamodoki {
+  font-family: 'Ikamodoki';
+  font-size: 1.2rem;
+}
 </style>

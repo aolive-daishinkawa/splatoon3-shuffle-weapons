@@ -2,7 +2,9 @@
   div
     v-row.my-4(justify="center")
       v-col(cols="auto")
-        h1 スプラトゥーン３ ブキシャッフル
+        h1.text-title(
+          :class="{'text-title-sp': $vuetify.breakpoint.xs}"
+        ) スプラトゥーン3 ブキシャッフル
     v-row
       v-col(cols="12" sm="6")
         v-card.ma-0(color="#EAFF3D")
@@ -35,28 +37,31 @@
 
     v-row
       v-col(cols="12" sm="6")
-        v-btn.font-weight-bold(
+        v-btn.font-weight-bold.py-6(
           color="#FF6B00"
           block
           @click="execShuffleWeapons"
           :disabled="shuffleWeaponsInstance"
-        ) ブキシャッフル
+        )
+          .text-ikamodoki ブキシャッフル
 
       v-col(cols="12" sm="6")
-        v-btn.font-weight-bold(
+        v-btn.font-weight-bold.py-6(
           color="#FF6B00"
           block
           size="large"
           @click="execShufflePlayers"
           :disabled="shufflePlayersInstance"
-        ) プレイヤーシャッフル
+        )
+          .text-ikamodoki プレイヤーシャッフル
 
     v-snackbar(
       v-model="snackbar"
       centered
       timeout="1000"
       color="rgba(0, 0, 0, 0.8)"
-    ) {{ snackbarMessage }}
+    )
+      .text-ikamodoki.py-4 {{ snackbarMessage }}
 
     hr(style="margin-top: 120px; margin-bottom: 24px;")
     v-row
@@ -155,9 +160,9 @@ export default class IndexPage extends Vue {
     setTimeout(() => {
       clearInterval(this.shuffleWeaponsInstance)
       this.shuffleWeaponsInstance = null
-      this.openSnackbar('シャッフル完了!!')
+      this.openSnackbar('おわり!!')
     }, 2000)
-    this.openSnackbar('ブキをシャッフルします')
+    this.openSnackbar('ブキシャッフルちゅう...')
   }
 
   shuffleWeapons() {
@@ -177,9 +182,9 @@ export default class IndexPage extends Vue {
     setTimeout(() => {
       clearInterval(this.shufflePlayersInstance)
       this.shufflePlayersInstance = null
-      this.openSnackbar('シャッフル完了!!')
+      this.openSnackbar('おわり!!')
     }, 2000)
-    this.openSnackbar('プレイヤーをシャッフルします')
+    this.openSnackbar('プレイヤーシャッフルちゅう...')
   }
 
   shufflePlayers() {
@@ -238,5 +243,19 @@ export default class IndexPage extends Vue {
 .btn-text {
   font-weight: bold;
   font-size: 1.5rem;
+}
+
+.text-title {
+  font-family: 'Ikamodoki';
+  font-size: 3rem;
+
+  &-sp {
+    font-size: 1.8rem;
+  }
+}
+
+.text-ikamodoki {
+  font-family: 'Ikamodoki';
+  font-size: 1.2rem;
 }
 </style>
