@@ -76,12 +76,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import {Component, Vue, Watch} from 'vue-property-decorator'
 import { Player } from '~/types/Player'
 import WEAPONS from '~/assets/weapons.json'
 import {Weapon} from "~/types/Weapon";
 
-@Component({})
+@Component({
+  head: () => ({
+    title: 'スプラトゥーン3 ブキシャッフル | プラベのおともに',
+  }),
+})
 export default class IndexPage extends Vue {
   players: Array<Player> = [
     {
@@ -140,6 +144,13 @@ export default class IndexPage extends Vue {
   snackbar: boolean = false
   snackbarMessage: string = ''
 
+  @Watch('players', {deep: true})
+  savePlayers() {
+    if (!this.shufflePlayersInstance && !this.shuffleWeaponsInstance) {
+      localStorage.setItem('PLAYERS', JSON.stringify(this.players))
+    }
+  }
+
   get loading() {
     return this.shuffleWeaponsInstance || this.shufflePlayersInstance
   }
@@ -155,12 +166,25 @@ export default class IndexPage extends Vue {
     }))
   }
 
+  mounted() {
+    this.loadPlayersFromLocalStorage()
+  }
+
+  loadPlayersFromLocalStorage() {
+    const localStoragePlayersString = localStorage.getItem('PLAYERS')
+    if (!localStoragePlayersString) return
+    const localStoragePlayers = JSON.parse(localStoragePlayersString)
+    if (!localStoragePlayers) return
+    this.players = [...localStoragePlayers]
+  }
+
   execShuffleWeapons() {
     this.shuffleWeaponsInstance = setInterval(this.shuffleWeapons, 50)
     setTimeout(() => {
       clearInterval(this.shuffleWeaponsInstance)
       this.shuffleWeaponsInstance = null
       this.openSnackbar('おわり!!')
+      this.savePlayers()
     }, 2000)
     this.openSnackbar('ブキシャッフルちゅう...')
   }
@@ -183,6 +207,7 @@ export default class IndexPage extends Vue {
       clearInterval(this.shufflePlayersInstance)
       this.shufflePlayersInstance = null
       this.openSnackbar('おわり!!')
+      this.savePlayers()
     }, 2000)
     this.openSnackbar('プレイヤーシャッフルちゅう...')
   }
