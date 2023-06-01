@@ -7,8 +7,9 @@
             v-model="privateDisabled"
             :true-value="false"
             :false-value="true"
+            :disabled="loading"
             color="#FF6B00"
-            @change="$emit('update:disabled', privateDisabled)"
+            @change="openSnackbar(privateDisabled ? 'プレイヤーを無効にしました' : 'プレイヤーを有効にしました'); $emit('update:disabled', privateDisabled)"
             hide-details
             light
           )
@@ -16,8 +17,8 @@
           v-text-field(
             v-model="privateName"
             @input="$emit('update:name', privateName)"
-            :disabled="disabled"
-            :background-color="disabled ? '#BDBDBD' : 'white'"
+            :disabled="disabled || loading"
+            :background-color="disabled || loading ? '#BDBDBD' : 'white'"
             :hide-details="true"
             :placeholder="`プレイヤー${index}`"
             outlined
@@ -28,8 +29,8 @@
         v-col(cols="2")
           v-switch.mt-0(
             v-model="privateIsShuffleWeapon"
-            :disabled="disabled"
-            @change="$emit('update:is-shuffle-weapon', privateIsShuffleWeapon)"
+            :disabled="disabled || loading"
+            @change="openSnackbar(privateIsShuffleWeapon ? 'ブキシャッフルを有効にしました' : 'ブキシャッフルを無効にしました'); $emit('update:is-shuffle-weapon', privateIsShuffleWeapon)"
             hide-details
             light
             color="#FF6B00"
@@ -38,7 +39,23 @@
           cols="10"
           :class="isAgainstTeam ? 'weapon-text-against' : 'weapon-text'"
         )
-          | {{ weapon && !disabled ? weapon.name : '' }}
+          v-select(
+            v-model="privateWeaponIndex"
+            :items="weaponsChoices"
+            :disabled="disabled || loading"
+            :background-color="disabled || loading ? '#BDBDBD' : 'white'"
+            outlined
+            dense
+            hide-details
+            light
+          )
+
+      v-snackbar(
+        v-model="snackbar"
+        centered
+        timeout="1000"
+        color="rgba(0, 0, 0, 0.8)"
+      ) {{ snackbarMessage }}
 </template>
 
 <script lang="ts">
@@ -50,23 +67,40 @@ export default class PlayerCard extends Vue {
   @Prop() public name!: string
   @Prop() public disabled!: boolean
   @Prop() public isShuffleWeapon!: boolean
-  @Prop() public weapon!: Weapon | null
+  @Prop() public weaponIndex!: number | null
   @Prop() public index!: number
   @Prop({default: false}) public isAgainstTeam?: boolean
+  @Prop() public loading!: boolean
+  @Prop() public weaponsChoices!: Array<{text: string, value: number}>
 
   @Watch('name')
   updatePrivateName() {
     this.privateName = this.name
   }
 
+  snackbar: boolean = false
+  snackbarMessage: string = ''
+
   @Watch('name')
-  updateprivateIsShuffleWeapon() {
+  updatePrivateIsShuffleWeapon() {
     this.privateIsShuffleWeapon = this.isShuffleWeapon
+  }
+
+  @Watch('weaponIndex')
+  updatePrivateWeaponIndex() {
+    this.privateWeaponIndex = this.weaponIndex
   }
 
   privateName: string = this.name
   privateDisabled: boolean = this.disabled
   privateIsShuffleWeapon: boolean = this.isShuffleWeapon
+  privateWeaponIndex: number | null = null
+
+
+  openSnackbar(msg: string) {
+    this.snackbarMessage = msg
+    this.snackbar = true
+  }
 
 }
 </script>

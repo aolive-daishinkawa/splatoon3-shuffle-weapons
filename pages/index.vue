@@ -1,5 +1,8 @@
 <template lang="pug">
   div
+    v-row.my-4(justify="center")
+      v-col(cols="auto")
+        h1 スプラトゥーン３ ブキシャッフル
     v-row
       v-col(cols="12" sm="6")
         v-card.ma-0(color="#EAFF3D")
@@ -9,8 +12,10 @@
                 :name.sync="player.name"
                 :disabled.sync="player.disabled"
                 :is-shuffle-weapon.sync="player.isShuffleWeapon"
-                :weapon="player.weapon"
+                :weapon-index="player.weaponIndex"
                 :index="i + 1"
+                :loading="loading"
+                :weapons-choices="weaponsChoices"
               )
 
       v-col(cols="12" sm="6")
@@ -21,13 +26,15 @@
                 :name.sync="player.name"
                 :disabled.sync="player.disabled"
                 :is-shuffle-weapon.sync="player.isShuffleWeapon"
-                :weapon="player.weapon"
+                :weapon-index="player.weaponIndex"
                 :is-against-team="true"
                 :index="i + 5"
+                :loading="loading"
+                :weapons-choices="weaponsChoices"
               )
 
     v-row
-      v-col(cols="6")
+      v-col(cols="12" sm="6")
         v-btn.font-weight-bold(
           color="#FF6B00"
           block
@@ -35,7 +42,7 @@
           :disabled="shuffleWeaponsInstance"
         ) ブキシャッフル
 
-      v-col(cols="6")
+      v-col(cols="12" sm="6")
         v-btn.font-weight-bold(
           color="#FF6B00"
           block
@@ -43,6 +50,13 @@
           @click="execShufflePlayers"
           :disabled="shufflePlayersInstance"
         ) プレイヤーシャッフル
+
+    v-snackbar(
+      v-model="snackbar"
+      centered
+      timeout="1000"
+      color="rgba(0, 0, 0, 0.8)"
+    ) {{ snackbarMessage }}
 
     hr(style="margin-top: 120px; margin-bottom: 24px;")
     v-row
@@ -60,55 +74,56 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { Player } from '~/types/Player'
 import WEAPONS from '~/assets/weapons.json'
+import {Weapon} from "~/types/Weapon";
 
 @Component({})
 export default class IndexPage extends Vue {
   players: Array<Player> = [
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
     {
       name: '',
-      weapon: null,
+      weaponIndex: null,
       disabled: false,
       isShuffleWeapon: true,
     },
@@ -117,8 +132,22 @@ export default class IndexPage extends Vue {
   shuffleWeaponsInstance: any = null
   shufflePlayersInstance: any = null
 
+  snackbar: boolean = false
+  snackbarMessage: string = ''
+
+  get loading() {
+    return this.shuffleWeaponsInstance || this.shufflePlayersInstance
+  }
+
   get allWeapons() {
     return WEAPONS
+  }
+
+  get weaponsChoices(): Array<{text: string, value: number}> {
+    return this.allWeapons.map((v: Weapon, i: number) => ({
+      text: v.name,
+      value: i,
+    }))
   }
 
   execShuffleWeapons() {
@@ -126,7 +155,9 @@ export default class IndexPage extends Vue {
     setTimeout(() => {
       clearInterval(this.shuffleWeaponsInstance)
       this.shuffleWeaponsInstance = null
+      this.openSnackbar('シャッフル完了!!')
     }, 2000)
+    this.openSnackbar('ブキをシャッフルします')
   }
 
   shuffleWeapons() {
@@ -137,7 +168,7 @@ export default class IndexPage extends Vue {
       }
     }
     for (const i of shuffleIndexes) {
-      this.players[Number(i)].weapon = {...this.getRandomWeapon()}
+      this.players[Number(i)].weaponIndex = this.getRandomWeaponIndex()
     }
   }
 
@@ -146,7 +177,9 @@ export default class IndexPage extends Vue {
     setTimeout(() => {
       clearInterval(this.shufflePlayersInstance)
       this.shufflePlayersInstance = null
+      this.openSnackbar('シャッフル完了!!')
     }, 2000)
+    this.openSnackbar('プレイヤーをシャッフルします')
   }
 
   shufflePlayers() {
@@ -173,9 +206,14 @@ export default class IndexPage extends Vue {
 
   }
 
+  openSnackbar(msg: string) {
+    this.snackbarMessage = msg
+    this.snackbar = true
+  }
 
-  getRandomWeapon() {
-    return WEAPONS[(Math.floor(Math.random() * WEAPONS.length))]
+
+  getRandomWeaponIndex() {
+    return (Math.floor(Math.random() * WEAPONS.length))
   }
 
   arrayShuffle(array: Array<any>) {
