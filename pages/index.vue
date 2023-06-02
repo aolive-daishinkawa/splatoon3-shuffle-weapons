@@ -72,7 +72,6 @@
       v-col(cols="auto")
         v-chip(v-for="weapon in allWeapons" x-small) {{ weapon.name }}
 
-
 </template>
 
 <script lang="ts">

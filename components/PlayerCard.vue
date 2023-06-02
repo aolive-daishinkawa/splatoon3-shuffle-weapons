@@ -96,6 +96,11 @@ export default class PlayerCard extends Vue {
   privateIsShuffleWeapon: boolean = this.isShuffleWeapon
   privateWeaponIndex: number | null = null
 
+  mounted() {
+    this.updatePrivateName()
+    this.updatePrivateIsShuffleWeapon()
+    this.updatePrivateWeaponIndex()
+  }
 
   openSnackbar(msg: string) {
     this.snackbarMessage = msg
